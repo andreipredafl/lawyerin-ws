@@ -1,27 +1,28 @@
-const http = require("http");
+const https = require("https");
+const fs = require("fs");
 const socketIo = require("socket.io");
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors");
+const cors = require("cors"); // Add this line
 
 const app = express();
 app.use(bodyParser.json());
 
 // Enable CORS
-app.use(cors());
+app.use(cors()); // Add this line
 
-// Create an HTTP server
-const server = http.createServer(app);
+// Create an HTTPS server
+const server = https.createServer(options, app);
 
 // Attach Socket.IO to the server
-const options = {
-    origin: "*",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
-    credentials: true,
-};
-
-const io = socketIo(server, options);
+const io = socketIo(server, {
+    transports: ["websocket", "polling"],
+    cors: {
+        origin: "*", // Adjust this line to your requirements
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type"],
+    },
+});
 
 // Store connected users
 const users = {};
@@ -88,7 +89,7 @@ app.post("/send-message", (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 server.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
