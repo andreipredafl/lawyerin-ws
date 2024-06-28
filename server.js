@@ -14,14 +14,14 @@ app.use(cors());
 const server = http.createServer(app);
 
 // Attach Socket.IO to the server
-const io = socketIo(server, {
-    transports: ["websocket", "polling"],
-    cors: {
-        origin: "*", // Adjust this line to your requirements
-        methods: ["GET", "POST"],
-        allowedHeaders: ["Content-Type"],
-    },
-});
+const options = {
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+};
+
+const io = socketIo(server, options);
 
 // Store connected users
 const users = {};
